@@ -14,9 +14,29 @@ const ShowEmployee = () => {
     const [sortField, setSortField] = useState(''); // Track sorting field
     const [sortOrder, setSortOrder] = useState('asc'); // Track sorting order
     const [currentPage, setCurrentPage] = useState(1); // Track current page
-    const itemsPerPage = 8; // Items per page
+    const itemsPerPage = 4; // Items per page
     const navigate = useNavigate(); // Initialize useNavigate
 
+    useEffect(() => {
+        // Function to check if the user is authenticated
+        const checkAuth = async () => {
+            try {
+                // Make a request to a protected endpoint or check a token in cookies/local storage
+                // For example, you could check if a token exists
+                const token = document.cookie.split('; ').find(row => row.startsWith('token='));
+                if (!token) {
+                    // Redirect to login if no token is found
+                    navigate('/login');
+                }
+
+            } catch (error) {
+                console.error('Error checking authentication:', error);
+                navigate('/login');
+            }
+        };
+
+        checkAuth();
+    }, [navigate]);
     const f = () => {
         setShowEmployee(true);
     };
@@ -46,7 +66,7 @@ const ShowEmployee = () => {
         const query = e.target.value.toLowerCase();
         setSearchQuery(query);
 
-        const filtered = userData.filter((user) => 
+        const filtered = userData.filter((user) =>
             user.Name.toLowerCase().includes(query) ||
             user.Email.toLowerCase().includes(query) ||
             user.Mobile.toLowerCase().includes(query)
@@ -134,16 +154,16 @@ const ShowEmployee = () => {
                         </div>
 
                         <div className="flex justify-center">
-                            <div className="min-w-screen h-[80vh] w-[90vw] flex justify-center bg-gray-100 font-sans overflow-x-scroll">
+                            <div className="min-w-screen h-[80vh] w-[95vw] flex justify-center bg-gray-100 font-sans overflow-x-scroll">
                                 <div className="w-full lg:w-5/6">
                                     <div className="rounded my-6 flex justify-center">
-                                        <table className="min-w-max w-full table-auto">
+                                        <table className="w-full table-auto">
                                             <thead>
                                                 <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                                                    <th className="py-3 px-6 text-center" onClick={() => handleSort('id')}>Unique id</th>
+                                                    <th className="py-3 px-6 text-center cursor-pointer" onClick={() => handleSort('id')}>Unique id</th>
                                                     <th className="py-3 px-6 text-center">Image</th>
-                                                    <th className="py-3 px-6 text-center" onClick={() => handleSort('Name')}>Name</th>
-                                                    <th className="py-3 px-6 text-center" onClick={() => handleSort('Email')}>Email</th>
+                                                    <th className="py-3 px-6 text-center cursor-pointer" onClick={() => handleSort('Name')}>Name</th>
+                                                    <th className="py-3 px-6 text-center cursor-pointer" onClick={() => handleSort('Email')}>Email</th>
                                                     <th className="py-3 px-6 text-center">Mobile No</th>
                                                     <th className="py-3 px-6 text-center">Designation</th>
                                                     <th className="py-3 px-6 text-center">Gender</th>
@@ -165,7 +185,14 @@ const ShowEmployee = () => {
                                                         <td className="py-3 px-6 text-center whitespace-nowrap">{user.Designation}</td>
                                                         <td className="py-3 px-6 text-center whitespace-nowrap">{user.Gender}</td>
                                                         <td className="py-3 px-6 text-center whitespace-nowrap">{user.Course}</td>
-                                                        <td className="py-3 px-6 text-center whitespace-nowrap">{user.CreateDate}</td>
+                                                        <td className="py-3 px-6 text-center whitespace-nowrap"><td className="py-3 px-6 text-center whitespace-nowrap">
+                                                            {new Date(user.CreateDate).toLocaleDateString('en-GB', {
+                                                                day: '2-digit',
+                                                                month: '2-digit',
+                                                                year: '2-digit'
+                                                            })}
+                                                        </td>
+                                                        </td>
                                                         <td className="py-3 px-6 text-center">
                                                             <div className="flex item-center justify-center">
                                                                 <div
@@ -212,19 +239,37 @@ const ShowEmployee = () => {
                                         </table>
 
                                         {/* Pagination */}
-                                     
+
                                     </div>
+                                    {/* Pagination */}
                                     <div className="flex justify-center my-4">
-                                            {[...Array(Math.ceil(filteredData.length / itemsPerPage)).keys()].map((page) => (
-                                                <button
-                                                    key={page + 1}
-                                                    onClick={() => paginate(page + 1)}
-                                                    className={`mx-1 px-3 py-1 border rounded ${currentPage === page + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                                                >
-                                                    {page + 1}
-                                                </button>
-                                            ))}
-                                        </div>
+                                        <button
+                                            onClick={() => paginate(currentPage - 1)}
+                                            className={`mx-1 px-3 py-1 border rounded ${currentPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
+                                            disabled={currentPage === 1}
+                                        >
+                                            Previous
+                                        </button>
+
+                                        {[...Array(Math.ceil(filteredData.length / itemsPerPage)).keys()].map((page) => (
+                                            <button
+                                                key={page + 1}
+                                                onClick={() => paginate(page + 1)}
+                                                className={`mx-1 px-3 py-1 border rounded ${currentPage === page + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                            >
+                                                {page + 1}
+                                            </button>
+                                        ))}
+
+                                        <button
+                                            onClick={() => paginate(currentPage + 1)}
+                                            className={`mx-1 px-3 py-1 border rounded ${currentPage === Math.ceil(filteredData.length / itemsPerPage) ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
+                                            disabled={currentPage === Math.ceil(filteredData.length / itemsPerPage)}
+                                        >
+                                            Next
+                                        </button>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

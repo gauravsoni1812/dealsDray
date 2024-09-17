@@ -7,16 +7,17 @@ import CreateEmployee from './CreateEmployee';
 import EditEmployee from './EditEmployee';
 import Signup from './Signup';
 import ShowEmployee from './ShowEmployee';
- 
+import {Toaster} from "react-hot-toast"
 
 // Import the AppProvider
 
 const App = () => {
   return (
-  
+  <>
+   <Toaster/>
       <BrowserRouter>
         <Routes>
-          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/create-employee" element={<CreateEmployee />} />
@@ -24,7 +25,7 @@ const App = () => {
           <Route path="/show-employees" element={<ShowEmployee />} />          
         </Routes>
       </BrowserRouter>
-  
+      </>
   );
 };
 

@@ -1,9 +1,10 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import toast from 'react-hot-toast';
 
 export default function EditEmployee({ employee, change }) {
   const [name, setName] = useState(employee?.Name || '');
@@ -14,6 +15,27 @@ export default function EditEmployee({ employee, change }) {
   const [courses, setCourses] = useState(employee?.Course ? employee.Course.split(',') : []);
   const [image, setImage] = useState(null); // For uploading a new image
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Function to check if the user is authenticated
+    const checkAuth = async () => {
+      try {
+        // Make a request to a protected endpoint or check a token in cookies/local storage
+        // For example, you could check if a token exists
+        const token = document.cookie.split('; ').find(row => row.startsWith('token='));
+        if (!token) {
+          // Redirect to login if no token is found
+          navigate('/login');
+        }
+
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+        navigate('/login');
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,11 +59,14 @@ export default function EditEmployee({ employee, change }) {
 
       if (response.status === 200) {
         console.log('Employee updated successfully', response.data);
+
+        toast.success("Employee updated successfully")
         navigate('/show-employees'); // Redirect after successful update
       } else {
         console.log('Failed to update employee', response.data.message);
       }
     } catch (error) {
+      toast.error(error.response?.data.message)
       console.error('Error during employee update:', error.response?.data || error.message);
     }
   };

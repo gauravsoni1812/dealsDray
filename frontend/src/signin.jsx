@@ -26,7 +26,7 @@ export default function Login() {
         Cookies.set('token', response.data.token, { expires: 1 }); // Token expires in 1 day
 
         console.log("navigating...");
-        navigate('/home'); // Redirect after login
+        navigate('/'); // Redirect after login
       } else {
         console.log('Login failed', response.data.message);
         // Handle login failure (show an error message)

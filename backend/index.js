@@ -70,7 +70,7 @@ app.post('/login', async (req, res) => {
             sameSite: 'None'
         });
 
-        res.json({ message: 'Login successful' });
+        res.json({ message: 'Login successful' , token});
     } catch (error) {
         res.status(500).json({ error: 'Login failed' });
     }
@@ -191,5 +191,32 @@ app.patch('/employees/:id', authenticateToken, upload.single('Image'), async (re
         res.status(200).json({ message: 'Employee updated successfully', employee: updatedEmployee });
     } catch (error) {
         res.status(500).json({ error: 'Failed to update employee', details: error.message });
+    }
+});
+
+
+app.delete('/employees/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const userId = req.user.userId;
+
+        // Find the employee to delete
+        const employee = await prisma.employee.findUnique({
+            where: { id: parseInt(id) },
+        });
+
+        if (!employee) {
+            return res.status(404).json({ message: 'Employee not found' });
+        }
+
+        // Delete the employee
+        await prisma.employee.delete({
+            where: { id: parseInt(id) },
+        });
+
+        res.status(200).json({ message: 'Employee deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete employee', details: error.message });
     }
 });

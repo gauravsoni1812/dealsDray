@@ -3,7 +3,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Import js-cookie
-export default function CreateEmployee() {
+import toast from 'react-hot-toast';
+export default function CreateEmployee() {  
+  
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -64,7 +66,7 @@ export default function CreateEmployee() {
 
       if (response.status === 201) {
         console.log('Employee created successfully', response.data);
-
+        toast.success("Employee is succuessfully created")
         // Reset form fields
         setName('');
         setEmail('');
@@ -78,12 +80,14 @@ export default function CreateEmployee() {
         navigate('/show-employees');
 
       } else {
+        toast.error(response.data.message)
         console.log('Failed to create employee', response.data.message);
         // Handle failure (show an error message)
       }
     } catch (error) {
       console.error('Error during employee creation:', error.response?.data || error.message);
       // Handle error (show an error message)
+      toast.error( error.response?.data.message )
     }
   };
 
@@ -158,7 +162,8 @@ export default function CreateEmployee() {
                     value={designation}
                     onChange={(e) => setDesignation(e.target.value)}
                     className="p-2 block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  >
+                  > 
+                    <option value="">Select the designation</option>
                     <option value="Hr">HR</option>
                     <option value="Manager">Manager</option>
                     <option value="Sales">Sales</option>
