@@ -212,7 +212,9 @@ const ShowEmployee = () => {
                                         </table>
 
                                         {/* Pagination */}
-                                       <div className="flex justify-center my-4">
+                                     
+                                    </div>
+                                    <div className="flex justify-center my-4">
                                             {[...Array(Math.ceil(filteredData.length / itemsPerPage)).keys()].map((page) => (
                                                 <button
                                                     key={page + 1}
@@ -223,7 +225,6 @@ const ShowEmployee = () => {
                                                 </button>
                                             ))}
                                         </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
